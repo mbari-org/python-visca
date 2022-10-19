@@ -27,7 +27,7 @@ class Camera(object):
         :rtype: Camera
         """
         # self._input = serial.Serial(self._input_string)
-        self._output = serial.Serial(self._output_string)
+        self._output = serial.Serial(self._output_string, 9600, timeout=1)
 
     def command(self, com):
         """Sends hexadecimal string to serial port.
@@ -41,7 +41,7 @@ class Camera(object):
             self._output.write(binascii.unhexlify(com))
             return True
         except Exception as e:
-            print com, e
+            print (com, e)
             return False
 
     @staticmethod
@@ -56,7 +56,7 @@ class Camera(object):
             serial_port.close()
             return True
         else:
-            print "Error closing serial port: Already closed."
+            print ("Error closing serial port: Already closed.")
             return False
 
     @staticmethod
@@ -71,13 +71,13 @@ class Camera(object):
             serial_port.open()
             return True
         else:
-            print "Error opening serial port: Already open."
+            print ("Error opening serial port: Already open.")
             return False
 
     def read(self, amount=3):
         total = ""
         while True:
-            msg = binascii.hexlify(self._output.read())
+            msg = binascii.hexlify(self._output.read()).decode("utf-8")
             total = total + msg
             if msg == "ff":
                 break
