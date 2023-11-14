@@ -34,13 +34,33 @@ class Optim(Camera):
     speed_table['1/1'] = '06'
 
 
-    def __init__(self, output):
-        """Init the camera object with the specified serial output
+    def __init__(self, output='/dev/ttyUSB0'):
+        """Sony VISCA control class.
 
-        Args:
-            output (str): path to the serial output file (eg. COM1 or /dev/ttyUSB0)
+        :param output: Serial port string. (default: 'COM1')
+        :type output: str
         """
-        super(output)
+        self.interp = interp1d([int(f[:-1], 16) for f in self.values], self.y)
+        super(self.__class__, self).__init__(output=output)
+
+    def init(self):
+        """Initializes camera object by connecting to serial port.
+
+        :return: Camera object.
+        :rtype: Camera
+        """
+        super(self.__class__, self).init()
+        return self
+
+    def comm(self, com):
+        """Sends hexadecimal string to serial port.
+
+        :param com: Command string. Hexadecimal format.
+        :type com: str
+        :return: Success.
+        :rtype: bool
+        """
+        super(self.__class__, self).command(com)
 
     def set_shutter_speed(self, speed):
         """set the shutter speed on the camera when in manual mode
@@ -50,7 +70,8 @@ class Optim(Camera):
         """
         if speed in speed_table:
             cmd = '8101044A0000' + '0' + speed_table[speed][0] + '0' + speed_table[speed][1] + 'FF'
-            
+            return self.command(cmd)
+
 
 
 
