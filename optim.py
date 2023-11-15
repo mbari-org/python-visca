@@ -139,6 +139,31 @@ class Optim(Camera):
         :rtype: bool
         """
         super(self.__class__, self).command(com)
+
+    def set_manual_AE(self):
+        """Set the camera to manual control of iris, gain, and exposure
+        """
+        return self.command('8101043903FF')
+    
+    def set_auto_AE(self):
+        """Set the camera to auto control of iris, gain, and exposure
+        """
+        return self.command('8101043900FF')
+    
+    def set_shutter_AE(self):
+        """Set the camera to auto exposure with shutter priority
+        """
+        return self.command('810104390AFF')
+    
+    def set_gain_AE(self):
+        """Set the camera to auto exposure with gain priority
+        """
+        return self.command('810104390EFF')
+    
+    def set_iris_AE(self):
+        """Set the camera to auto exposure with iris priority
+        """
+        return self.command('810104390BFF')
         
     def set_direct_value(self, base_hex, direct_value):
         """ Set a direct value for camera parameter like gain, shutter speed or iris
@@ -206,4 +231,14 @@ class Optim(Camera):
         """Set full tele zoom on the camera
         """
         return self.command('8101040737FF') # fastest zoom speed
+    
+    def set_ICR_On(self):
+        """Set the ICR mode
+        """
+        return self.command('8101040102FF')
+    
+    def set_ICR_Off(self):
+        """Set the ICR mode
+        """
+        return self.command('8101040103FF')
     
