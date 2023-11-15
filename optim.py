@@ -1,6 +1,18 @@
 from visca.camera import Camera
 
+
 class Optim(Camera):
+    """ DSPL Optim camera interface class based on python-visca
+    
+        This class follows the FCB-ER8550_8530_Tech_Manual provided by DSPL and
+        define tables to map from human readable camera settings to the hex values 
+        used by VISCA.
+        
+        The interface requires a working serial connection between the host and the
+        camera, typically /dev/ttyUSB0.
+        
+        Currently only a small subset of function and presents are defined.
+    """
 
     """ Mapping from shutter speed to hex setting """
     speed_table = {}
@@ -32,6 +44,52 @@ class Optim(Camera):
     speed_table['1/2'] = '08'
     speed_table['2/3'] = '07'
     speed_table['1/1'] = '06'
+    
+    """ Mapping from camera sensor gain in dB to hex setting """
+    gain_table = {}
+    gain_table['48'] = '11'
+    gain_table['45'] = '10'
+    gain_table['42'] = '0F'
+    gain_table['39'] = '0E'
+    gain_table['36'] = '0D'
+    gain_table['33'] = '0C'
+    gain_table['30'] = '0B'
+    gain_table['27'] = '0A'
+    gain_table['24'] = '09'
+    gain_table['21'] = '08'
+    gain_table['18'] = '07'
+    gain_table['15'] = '06'
+    gain_table['12'] = '05'
+    gain_table['9'] = '04'
+    gain_table['6'] = '03'
+    gain_table['3'] = '02'
+    gain_table['0'] = '01'
+    
+    """ Mapping from camera iris in f/# to hex setting """
+    iris_table = {}
+    iris_table['F2.0'] = '19'
+    iris_table['F2.2'] = '18'
+    iris_table['F2.4'] = '17'
+    iris_table['F2.6'] = '16'
+    iris_table['F2.8'] = '15'
+    iris_table['F3.1'] = '14'
+    iris_table['F3.4'] = '13'
+    iris_table['F3.7'] = '12'
+    iris_table['F4.0'] = '11'
+    iris_table['F4.4'] = '10'
+    iris_table['F4.8'] = '0F'
+    iris_table['F5.2'] = '0E'
+    iris_table['F5.6'] = '0D'
+    iris_table['F6.2'] = '0C'
+    iris_table['F6.8'] = '0B'
+    iris_table['F7.3'] = '0A'
+    iris_table['F7.8'] = '09'
+    iris_table['F8.0'] = '08'
+    iris_table['F9.6'] = '07'
+    iris_table['F10'] = '06'
+    iris_table['F11'] = '05'
+    iris_table['CLOSE'] = '00'
+    
 
 
     def __init__(self, output='/dev/ttyUSB0'):
@@ -61,6 +119,16 @@ class Optim(Camera):
         :rtype: bool
         """
         super(self.__class__, self).command(com)
+        
+    def set_direct_value(self, base_hex, direct_value):
+        """ Set a direct value for camera parameter like gain, shutter speed or iris
+        
+        Args:
+            base_hex (str): The address of the parameter
+            direct_vale (str): the two char value to set from table
+        """
+        cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1] + 'FF'
+        return self.command(cmd)
 
     def set_shutter_speed(self, speed):
         """set the shutter speed on the camera when in manual mode
@@ -68,11 +136,54 @@ class Optim(Camera):
         Args:
             speed (str): shutter speed in 1/s
         """
-        if speed in speed_table:
-            cmd = '8101044A0000' + '0' + speed_table[speed][0] + '0' + speed_table[speed][1] + 'FF'
-            return self.command(cmd)
+        if speed in self.speed_table:
+            return self.set_direct_value('8101044A0000', self.speed_table[speed])
+        
+    def set_gain(self, gain):
+        """ Set the camera sensor gain when in manual mode
+        
+        Args:
+            gain (str): sensor gain in dB
+        """
+        if gain in self.gain_table:
+            return self.set_direct_value('8101044C0000', self.gain_table[gain])
+        
+    def set_iris(self, gain):
+        """ Set the camera sensor gain when in manual mode
+        
+        Args:
+            gain (str): sensor gain in dB
+        """
+        if gain in self.gain_table:
+            return self.set_direct_value('8101044B0000', self.gain_table[gain])
 
+    def set_auto_focus(self):
+        """set the camera to auto focus mode
+        """
+        return self.command('8101043802FF') # manual focus
+    
+    def set_manual_focus(self):
+        """set the camera to manual focus mode
+        """
+        return self.command('8101043803FF') # manual focus
 
+    def set_far_focus(self):
+        """set the camera to far focus
+        """
+        return self.command('8101040827FF') # fastest focus speed
 
-
+    def set_near_focus(self):
+        """set the camera to near focus
+        """
+        return self.command('8101040837FF') # fastest focus speed
+    
+    def set_wide_zoom(self):
+        """Set full wide zoom on the camera
+        """
+        return self.command('8101040727FF') # fastest zoom speed
+    
+    def set_tele_zoom(self):
+        """Set full tele zoom on the camera
+        """
+        return self.command('8101040737FF') # fastest zoom speed
     
