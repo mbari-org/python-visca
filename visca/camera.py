@@ -79,7 +79,7 @@ class Camera(object):
         while True:
             msg = binascii.hexlify(self._output.read()).decode("utf-8")
             total = total + msg
-            if msg == "ff":
+            if msg == "ff" or len(msg) == 0:
                 break
         return total
 

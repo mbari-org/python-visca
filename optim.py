@@ -1,3 +1,9 @@
+import re
+import binascii
+import numpy as np
+import serial
+from scipy.interpolate import interp1d
+
 from visca.camera import Camera
 
 
@@ -98,7 +104,6 @@ class Optim(Camera):
         :param output: Serial port string. (default: 'COM1')
         :type output: str
         """
-        self.interp = interp1d([int(f[:-1], 16) for f in self.values], self.y)
         super(self.__class__, self).__init__(output=output)
 
     def init(self):
@@ -109,6 +114,21 @@ class Optim(Camera):
         """
         super(self.__class__, self).init()
         return self
+    
+    def command(self, com):
+        """Sends hexadecimal string to serial port.
+
+        :param com: Command string. Hexadecimal format.
+        :type com: str
+        :return: Success.
+        :rtype: bool
+        """
+        try:
+            self._output.write(binascii.unhexlify(com))
+            return self.read()
+        except Exception as e:
+            print (com, e)
+            return False
 
     def comm(self, com):
         """Sends hexadecimal string to serial port.
