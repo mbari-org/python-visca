@@ -3,7 +3,7 @@ A Python library for controlling Sony VISCA cameras with specific classes for th
 
 # Installation
 
-Run `pip install git+git://github.com/charlnaya/python-visca.git`.
+Run `pip install git+git://github.com/mbari-org/python-visca.git`.
 
 # Usage
 

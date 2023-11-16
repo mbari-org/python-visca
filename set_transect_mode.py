@@ -1,4 +1,4 @@
-from optim import Optim
+from visca.optim import Optim
 cam = Optim(output="/dev/ttyUSB0")
 cam.init()
 cam.set_wide_zoom()
