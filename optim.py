@@ -173,6 +173,7 @@ class Optim(Camera):
             direct_vale (str): the two char value to set from table
         """
         cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1] + 'FF'
+        print(cmd)
         return self.command(cmd)
 
     def set_shutter_speed(self, speed):
@@ -193,14 +194,14 @@ class Optim(Camera):
         if gain in self.gain_table:
             return self.set_direct_value('8101044C0000', self.gain_table[gain])
         
-    def set_iris(self, gain):
-        """ Set the camera sensor gain when in manual mode
+    def set_iris(self, iris):
+        """ Set the camera sensor iris when in manual mode
         
         Args:
-            gain (str): sensor gain in dB
+            iris (str): sensor iris in F/#
         """
-        if gain in self.gain_table:
-            return self.set_direct_value('8101044B0000', self.gain_table[gain])
+        if iris in self.iris_table:
+            return self.set_direct_value('8101044B0000', self.iris_table[iris])
 
     def set_auto_focus(self):
         """set the camera to auto focus mode
@@ -225,12 +226,12 @@ class Optim(Camera):
     def set_wide_zoom(self):
         """Set full wide zoom on the camera
         """
-        return self.command('8101040727FF') # fastest zoom speed
+        return self.command('8101040737FF') # fastest zoom speed
     
     def set_tele_zoom(self):
         """Set full tele zoom on the camera
         """
-        return self.command('8101040737FF') # fastest zoom speed
+        return self.command('8101040727FF') # fastest zoom speed
     
     def set_ICR_On(self):
         """Set the ICR mode
