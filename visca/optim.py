@@ -173,7 +173,7 @@ class Optim(Camera):
             direct_vale (str): the two char value to set from table
         """
         cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1] + 'FF'
-        print(cmd)
+        # print(cmd)
         return self.command(cmd)
 
     def set_shutter_speed(self, speed):
