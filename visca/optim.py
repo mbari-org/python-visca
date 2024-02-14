@@ -17,7 +17,7 @@ class Optim(Camera):
         The interface requires a working serial connection between the host and the
         camera, typically /dev/ttyUSB0.
         
-        Currently only a small subset of function and presents are defined.
+        Currently only a small subset of function and presets are defined.
     """
 
     """ Mapping from shutter speed to hex setting """
@@ -95,6 +95,45 @@ class Optim(Camera):
     iris_table['F10'] = '06'
     iris_table['F11'] = '05'
     iris_table['CLOSE'] = '00'
+    
+    """ Mapping from camera zoom in x (times) to hex value """
+    zoom_table['1x'] = '0000'
+    zoom_table['2x'] = '0DC1'
+    zoom_table['3x'] = '186C'
+    zoom_table['4x'] = '2015'
+    zoom_table['5x'] = '2594'
+    zoom_table['6x'] = '29B7'
+    zoom_table['7x'] = '2CFB'
+    zoom_table['8x'] = '2FB0'
+    zoom_table['9x'] = '2CFB'
+    zoom_table['10x'] = '342D'
+    zoom_table['11x'] = '3608'
+    zoom_table['12x'] = '37AA'
+    zoom_table['13x'] = '391C'
+    zoom_table['14x'] = '3A66'
+    zoom_table['15x'] = '3B90'
+    zoom_table['16x'] = '3C9C'
+    zoom_table['17x'] = '3D91'
+    zoom_table['18x'] = '3E72'
+    zoom_table['19x'] = '3F40'
+    zoom_table['20x'] = '4000'
+    
+    """ Mapping from camera focus position to hex value """
+    focus_near_limit_table['100m'] = '1000'
+    focus_near_limit_table['10m'] = '2000'
+    focus_near_limit_table['5m'] = '3000'
+    focus_near_limit_table['3.3m'] = '4000'
+    focus_near_limit_table['2.5m'] = '5000'
+    focus_near_limit_table['2.0m'] = '6000'
+    focus_near_limit_table['1.7m'] = '7000'
+    focus_near_limit_table['2.5m'] = '5000'
+    focus_near_limit_table['1.5m'] = '8000'
+    focus_near_limit_table['1.0m'] = '9000'
+    focus_near_limit_table['0.5m'] = 'A000'
+    focus_near_limit_table['0.3m'] = 'B000'
+    focus_near_limit_table['15cm'] = 'C000'
+    focus_near_limit_table['6cm'] = 'D000'
+    focus_near_limit_table['1cm'] = 'E000'
     
 
 
