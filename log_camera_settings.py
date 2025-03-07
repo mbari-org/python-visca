@@ -5,23 +5,41 @@ cam = Optim(output="/dev/ttyUSB0")
 cam.init()
 
 
-loop_delay = 5.0
-log_file = './optim_camera_log.txt'
+loop_delay = 10.0
+loop_counter = 0
+log_file = '/home/tethysadmin/optim_camera_log.txt'
 
 try:
     while True:
+
+        # Log the camera settings
         with open(log_file, "a") as log:
 
             log.write("################\r\n")
-            log.write(str(datetime.datetime.now()) + "\r\n")
+            timestamp = str(datetime.datetime.now())
+            print(timestamp)
+            log.write(timestamp + "\r\n")
             log.write(cam.command('81097E7E00FF') + "\r\n")
             log.write(cam.command('81097E7E01FF') + "\r\n")
             log.write(cam.command('81097E7E02FF') + "\r\n")
             log.write(cam.command('81097E7E03FF') + "\r\n")
 
+        # Periodically reset camera settings in case they don't take
+        if loop_counter % 3 == 0:
+            # Set the camera config
+            cam.set_wide_zoom()
+            cam.set_manual_AE()
+            # Let the gain and iris auto
+            cam.set_gain('6')
+            cam.set_iris('F2.0')
+            #cam.set_shutter_AE()
+            cam.set_shutter_speed('1/250')
+
+        loop_counter += 1
+        
         time.sleep(loop_delay)
 
-except KeyboardInterrupt:
-    pass
+except Exception as e:
+    print(e)
 
 

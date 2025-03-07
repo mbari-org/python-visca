@@ -1,6 +1,5 @@
 import re
 import binascii
-import numpy as np
 import serial
 from scipy.interpolate import interp1d
 

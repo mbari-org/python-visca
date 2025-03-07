@@ -1,6 +1,5 @@
 import re
 import binascii
-import numpy as np
 import serial
 from scipy.interpolate import interp1d
 
@@ -80,6 +79,6 @@ class Camera(object):
             msg = binascii.hexlify(self._output.read()).decode("utf-8")
             total = total + msg
             #print(msg)
-            if msg == "ff" or len(msg) == 0:
+            if len(msg) == 0:
                 break
         return total
