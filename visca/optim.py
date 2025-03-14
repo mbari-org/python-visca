@@ -164,6 +164,11 @@ class Optim(Camera):
         """
         return self.command('810104390BFF')
         
+    def turn_off_noise_reduction(self):
+        """Set the NR to zero
+        """
+        return self.command('8101045300FF')
+    
     def set_direct_value(self, base_hex, direct_value):
         """ Set a direct value for camera parameter like gain, shutter speed or iris
         
