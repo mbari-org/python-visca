@@ -1,6 +1,5 @@
 import re
 import binascii
-import numpy as np
 import serial
 from scipy.interpolate import interp1d
 
@@ -97,6 +96,7 @@ class Optim(Camera):
     iris_table['CLOSE'] = '00'
     
     """ Mapping from camera zoom in x (times) to hex value """
+    zoom_table = {}
     zoom_table['1x'] = '0000'
     zoom_table['2x'] = '0DC1'
     zoom_table['3x'] = '186C'
@@ -119,23 +119,22 @@ class Optim(Camera):
     zoom_table['20x'] = '4000'
     
     """ Mapping from camera focus position to hex value """
-    focus_near_limit_table['100m'] = '1000'
-    focus_near_limit_table['10m'] = '2000'
-    focus_near_limit_table['5m'] = '3000'
-    focus_near_limit_table['3.3m'] = '4000'
-    focus_near_limit_table['2.5m'] = '5000'
-    focus_near_limit_table['2.0m'] = '6000'
-    focus_near_limit_table['1.7m'] = '7000'
-    focus_near_limit_table['2.5m'] = '5000'
-    focus_near_limit_table['1.5m'] = '8000'
-    focus_near_limit_table['1.0m'] = '9000'
-    focus_near_limit_table['0.5m'] = 'A000'
-    focus_near_limit_table['0.3m'] = 'B000'
-    focus_near_limit_table['15cm'] = 'C000'
-    focus_near_limit_table['6cm'] = 'D000'
-    focus_near_limit_table['1cm'] = 'E000'
-    
-
+    focus_table = {}
+    focus_table['100m'] = '1000'
+    focus_table['10m'] = '2000'
+    focus_table['5m'] = '3000'
+    focus_table['3.3m'] = '4000'
+    focus_table['2.5m'] = '5000'
+    focus_table['2.0m'] = '6000'
+    focus_table['1.7m'] = '7000'
+    focus_table['2.5m'] = '5000'
+    focus_table['1.5m'] = '8000'
+    focus_table['1.0m'] = '9000'
+    focus_table['0.5m'] = 'A000'
+    focus_table['0.3m'] = 'B000'
+    focus_table['15cm'] = 'C000'
+    focus_table['6cm'] = 'D000'
+    focus_table['1cm'] = 'E000'
 
     def __init__(self, output='/dev/ttyUSB0'):
         """Sony VISCA control class.
@@ -204,6 +203,11 @@ class Optim(Camera):
         """
         return self.command('810104390BFF')
         
+    def turn_off_noise_reduction(self):
+        """Set the NR to zero
+        """
+        return self.command('8101045300FF')
+    
     def set_direct_value(self, base_hex, direct_value):
         """ Set a direct value for camera parameter like gain, shutter speed or iris
         
@@ -215,6 +219,48 @@ class Optim(Camera):
         # print(cmd)
         return self.command(cmd)
 
+    def set_direct_focus(self, base_hex, direct_value):
+        """ Set a direct value for camera parameter like gain, shutter speed or iris
+        
+        Args:
+            base_hex (str): The address of the parameter
+            direct_vale (str): the two char value to set from table
+        """
+        cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1]  + '0' + direct_value[2] + '0' + direct_value[3] + 'FF'
+        # print(cmd)
+        return self.command(cmd)
+
+    def set_direct_zoom(self, base_hex, direct_value):
+        """ Set a direct value for camera parameter like gain, shutter speed or iris
+
+        Args:
+            base_hex (str): The address of the parameter
+            direct_vale (str): the two char value to set from table
+        """
+        cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1]  + '0' + direct_value[2] + '0' + direct_value[3] + 'FF'
+        # print(cmd)
+        return self.command(cmd)
+
+    
+    def set_focus(self, focus):
+        """ Set the camera sensor iris when in manual mode
+        
+        Args:
+            focus (str): lens focus distance value (see table)
+        """
+        if focus in self.focus_table:
+            return self.set_direct_focus('81010448', self.focus_table[focus])
+   
+    def set_zoom(self, zoom):
+        """ Set the camera sensor iris when in manual mode
+        
+        Args:
+            focus (str): lens focus distance value (see table)
+        """
+        if zoom in self.zoom_table:
+            return self.set_direct_focus('81010447', self.zoom_table[zoom])
+
+    
     def set_shutter_speed(self, speed):
         """set the shutter speed on the camera when in manual mode
 
