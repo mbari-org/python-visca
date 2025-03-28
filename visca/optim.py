@@ -208,6 +208,16 @@ class Optim(Camera):
         """
         return self.command('8101045300FF')
     
+    def set_outdoor_wb(self):
+        """Set the camera to outdoor WB
+        """
+        return self.command('8101043502FF')
+
+    def set_indoor_wb(self):
+        """Set the camera to indoor WB
+        """
+        return self.command('8101043501FF')
+    
     def set_direct_value(self, base_hex, direct_value):
         """ Set a direct value for camera parameter like gain, shutter speed or iris
         
@@ -279,6 +289,24 @@ class Optim(Camera):
         if gain in self.gain_table:
             return self.set_direct_value('8101044C0000', self.gain_table[gain])
         
+    def set_red_gain(self, red_gain):
+        """ Set the red gain direcly from the output of a WB test
+
+        Args:
+            red_gain (str) : hex string between 00 to FF
+        """
+        command_string = '810104430000' + '0' + red_gain[0] + '0' + red_gain[1] + 'FF'
+        return self.command(command_string)
+    
+    def set_blue_gain(self, blue_gain):
+        """ Set the blue gain direcly from the output of a WB test
+        
+        Args: 
+            blue_gain (str) : hex string between 00 and FF
+        """
+        command_string = '810104440000' + '0' + blue_gain[0] + '0' + blue_gain[1] + 'FF'
+        return self.command(command_string)
+    
     def set_iris(self, iris):
         """ Set the camera sensor iris when in manual mode
         
