@@ -28,19 +28,20 @@ while True:
     if log_index >= len(lines):
         break
     
-    line = lines[log_index]
+    line = lines[log_index]    
     if len(line) >= 16 and '################' in line:
         # log event marker, try to read five more lines
+        print(lines[log_index])
         log_entry = []
         try:
             for i in range(1,6):
                 log_entry.append(lines[log_index+i])
             log_index += 6
             # Parse log info and append to csv
-            zoom_pos = int(log_entry[1][5:12:2],16)
-            focus_pos = int(log_entry[1][17:24:2],16)
-            red_gain = int(log_entry[2][5:8:2],16)
-            blue_gain = int(log_entry[2][9:12:2],16)
+            zoom_pos = log_entry[1][5:12:2]
+            focus_pos = log_entry[1][17:24:2]
+            red_gain = log_entry[2][5:8:2]
+            blue_gain = log_entry[2][9:12:2]
             wb_mode = log_entry[2][13]
             aperture_gain = log_entry[2][15]
             exposure_mode = log_entry[2][17]
@@ -62,8 +63,11 @@ while True:
                        gain_pos
             ]
             print(log_row)
-            
+
         except Exception as e:
             break
+    else:
+        log_index += 1
+    
     
 
