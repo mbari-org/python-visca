@@ -69,7 +69,21 @@ class Optim(Camera):
     gain_table['6'] = '03'
     gain_table['3'] = '02'
     gain_table['0'] = '01'
-    
+   
+    """ Mapping from gain limit in dB to hex setting """
+    gain_limit_table = {}
+    gain_limit_table['36'] = 'D'
+    gain_limit_table['33'] = 'C'
+    gain_limit_table['30'] = 'B'
+    gain_limit_table['27'] = 'A'
+    gain_limit_table['24'] = '9'
+    gain_limit_table['21'] = '8'
+    gain_limit_table['18'] = '7'
+    gain_limit_table['15'] = '6'
+    gain_limit_table['12'] = '5'
+    gain_limit_table['9'] = '4'
+
+
     """ Mapping from camera iris in f/# to hex setting """
     iris_table = {}
     iris_table['F2.0'] = '19'
@@ -226,9 +240,18 @@ class Optim(Camera):
             direct_vale (str): the two char value to set from table
         """
         cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1] + 'FF'
-        # print(cmd)
         return self.command(cmd)
 
+    def set_direct_single_value(self, base_hex, direct_value):
+        """ Set a direct value for camera parameter like gain, shutter speed or iris
+        
+        Args:
+            base_hex (str): The address of the parameter
+            direct_vale (str): the single char value to set
+        """
+        cmd = base_hex + '0' + direct_value + 'FF'
+        return self.command(cmd)
+    
     def set_direct_focus(self, base_hex, direct_value):
         """ Set a direct value for camera parameter like gain, shutter speed or iris
         
@@ -237,7 +260,6 @@ class Optim(Camera):
             direct_vale (str): the two char value to set from table
         """
         cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1]  + '0' + direct_value[2] + '0' + direct_value[3] + 'FF'
-        # print(cmd)
         return self.command(cmd)
 
     def set_direct_zoom(self, base_hex, direct_value):
@@ -248,7 +270,6 @@ class Optim(Camera):
             direct_vale (str): the two char value to set from table
         """
         cmd = base_hex + '0' + direct_value[0] + '0' + direct_value[1]  + '0' + direct_value[2] + '0' + direct_value[3] + 'FF'
-        # print(cmd)
         return self.command(cmd)
 
     
@@ -289,6 +310,33 @@ class Optim(Camera):
         if gain in self.gain_table:
             return self.set_direct_value('8101044C0000', self.gain_table[gain])
         
+    def set_gain_limit(self, gain):
+        """ Set the limit on camera sensor gain when in auto mode
+        
+        Args:
+            gain (str): sensor gain in dB
+        """
+        if gain in self.gain_limit_table:
+            return self.set_direct_single_value('8101042C', self.gain_limit_table[gain])
+    
+    def set_min_shutter(self, speed):
+        """ Set the minimum shutter speed when in AE full
+        
+        Args:
+            min_shutter (str): shutter speed in 1/#
+        """
+        if speed in self.speed_table:
+            return self.set_direct_value('8101052A01', self.speed_table[speed])
+    
+    def set_max_shutter(self, speed):
+        """ Set the maximum shutter speed when in AE full
+        
+        Args:
+            min_shutter (str): shutter speed in 1/#
+        """
+        if speed in self.speed_table:
+            return self.set_direct_value('8101052A010', self.speed_table[speed])
+
     def set_red_gain(self, red_gain):
         """ Set the red gain direcly from the output of a WB test
 
